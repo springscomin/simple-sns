@@ -1,8 +1,10 @@
 package com.project.sns.controller;
 
 import com.project.sns.controller.request.UserJoinRequest;
+import com.project.sns.controller.request.UserLoginRequest;
 import com.project.sns.controller.response.Response;
 import com.project.sns.controller.response.UserJoinResponse;
+import com.project.sns.controller.response.UserLoginResponse;
 import com.project.sns.model.User;
 import com.project.sns.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,11 @@ public class UserController {
         User user = userService.join(request.getUserName(), request.getPassword());
         UserJoinResponse response = UserJoinResponse.fromUser(user);
         return Response.success(response);
+    }
+
+    @PostMapping("/login")
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+        String token = userService.login(userLoginRequest.getUserName(), userLoginRequest.getPassword());
+        return Response.success(new UserLoginResponse(token));
     }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -22,11 +23,14 @@ public class UserServiceTest {
     @MockBean
     UserEntityRepository userEntityRepository;
 
+    @MockBean
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     UserService userService;
 
     @BeforeEach
     void init() {
-        userService = new UserService(userEntityRepository);
+        userService = new UserService(userEntityRepository, bCryptPasswordEncoder);
     }
 
     @Test
@@ -57,6 +61,7 @@ public class UserServiceTest {
         UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));
+        when(bCryptPasswordEncoder.encode(any())).thenReturn();
 
         Assertions.assertDoesNotThrow(() -> userService.login(userName, password));
     }
