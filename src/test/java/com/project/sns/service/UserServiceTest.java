@@ -5,8 +5,8 @@ import com.project.sns.fixture.UserEntityFixture;
 import com.project.sns.model.entity.UserEntity;
 import com.project.sns.repository.UserEntityRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -19,11 +19,15 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class UserServiceTest {
 
-    @Autowired
+    @MockBean
+    UserEntityRepository userEntityRepository;
+
     UserService userService;
 
-    @MockBean
-    private UserEntityRepository userEntityRepository;
+    @BeforeEach
+    void init() {
+        userService = new UserService(userEntityRepository);
+    }
 
     @Test
     void 회원가입이_정상적으로_동작하는_경우() {
@@ -40,8 +44,6 @@ public class UserServiceTest {
     void 회원가입시_userName으로_회원가입한_유저가_이미_있는경우() {
         String userName = "userName";
         String password = "";
-
-        UserEntity fixture = UserEntityFixture.get(userName, password);
 
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(mock(UserEntity.class)));
 
