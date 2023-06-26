@@ -1,5 +1,18 @@
 spring:
-  datasource:
-    url: 'jdbc:postgresql://localhost:5432/docker'
-    username: 'root1'
-    password: '1234'
+#  datasource:
+#    url: 'jdbc:postgresql://localhost:5432/docker'
+#    username: 'root1'
+#    password: '1234'
+  h2:
+    console:
+      enabled: true
+      path: /h2
+    datasource:
+      url: jdbc:h2:mem:test
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
