@@ -5,7 +5,9 @@ import com.project.sns.exception.SnsApplicationException;
 import com.project.sns.model.User;
 import com.project.sns.model.entity.UserEntity;
 import com.project.sns.repository.UserEntityRepository;
+import com.project.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,11 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
 
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private long expiredTimeMs;
 
     public User join(String userName, String password) {
         // 같은 userName을 갖는 회원이 있는지
@@ -41,10 +48,12 @@ public class UserService {
 
         // 비밀번호 체크
 //        if (!encoder.encode(userEntity.getPassword()).equals(password)) {
-        if (encoder.matches(password, userEntity.getPassword()))
+        if (!encoder.matches(password, userEntity.getPassword()))
             throw new SnsApplicationException(ErrorCode.INVALID_PASSWORD);
 
-        
-        return null;
+
+        // 토큰 생성
+        String token = JwtTokenUtils.generateToken(userName, secretKey, expiredTimeMs);
+        return token;
     }
 }
